@@ -13,7 +13,6 @@ This MCP server provides a secure interface for AI assistants to access official
 ### Current Implementation
 
 - **`search_hawker_centres`** - Search for specific hawker centre closure information by keyword (name, location, etc.)
-- **`get_all_closures`** - Retrieve all current hawker centre closure records with configurable limit
 
 ## Prerequisites
 
