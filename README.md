@@ -2,6 +2,8 @@
 
 A Model Context Protocol (MCP) server that provides real-time information about hawker centre closures in Singapore using data from data.gov.sg.
 
+> **Disclaimer**: This is an unofficial MCP server project that was entirely generated using Claude AI. While functional, please review and test thoroughly before production use.
+
 ## Purpose
 
 This MCP server provides a secure interface for AI assistants to access official Singapore government data about hawker centre closures, including closure dates, reopening dates, and reasons for closure.
