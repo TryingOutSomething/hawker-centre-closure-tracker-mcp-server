@@ -82,6 +82,8 @@ registry:
     image: hawker-mcp-server:latest
     tools:
       - name: search_hawker_centres
+      - name: search_hawker_centres_by_address
+      - name: get_all_hawker_centres
     # Uncomment the following section if you have a data.gov.sg API key
     # secrets:
     #   - name: DATA_GOV_SG_API_KEY
