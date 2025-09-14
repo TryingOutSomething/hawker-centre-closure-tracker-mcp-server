@@ -26,6 +26,49 @@ RESOURCE_ID = "b80cb643-a732-480d-86b5-e03957bc82aa"
 
 # === UTILITY FUNCTIONS ===
 
+async def fetch_all_records(params, headers):
+    """Fetch all records using pagination."""
+    all_records = []
+    offset = 0
+    limit = 100  # Maximum per request
+
+    while True:
+        current_params = params.copy()
+        current_params.update({
+            "offset": offset,
+            "limit": limit
+        })
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                BASE_URL,
+                params=current_params,
+                headers=headers,
+                timeout=15
+            )
+            response.raise_for_status()
+
+            data = response.json()
+
+            if not data.get("success", False):
+                break
+
+            result = data.get("result", {})
+            records = result.get("records", [])
+
+            if not records:
+                break
+
+            all_records.extend(records)
+            offset += len(records)
+
+            # If we got fewer records than the limit, we've reached the end
+            if len(records) < limit:
+                break
+
+    return all_records
+
+
 def format_hawker_data(records):
     """Format hawker centre data for display."""
     if not records:
@@ -162,6 +205,95 @@ async def search_hawker_centres(keyword: str = "") -> str:
         return "⏱️ Request timed out. Please try again."
     except Exception as e:
         logger.error(f"Error searching hawker centres: {e}")
+        return f"❌ Error: {str(e)}"
+
+
+@mcp.tool()
+async def search_hawker_centres_by_address(address: str = "") -> str:
+    """Search for hawker centres by address using exact field filtering."""
+    logger.info(f"Searching hawker centres by address: {address}")
+
+    if not address.strip():
+        return "❌ Error: Please provide an address to search for hawker centres"
+
+    try:
+        headers = {}
+        if API_KEY:
+            headers["x-api-key"] = API_KEY
+
+        # Use filters parameter for exact field matching
+        params = {
+            "resource_id": RESOURCE_ID,
+            "filters": {"address_my_env": address.strip()}
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                BASE_URL,
+                params=params,
+                headers=headers,
+                timeout=10
+            )
+            response.raise_for_status()
+
+            data = response.json()
+
+            if not data.get("success", False):
+                return f"❌ API Error: {data.get('error', 'Unknown error')}"
+
+            result = data.get("result", {})
+            records = result.get("records", [])
+            total = result.get("total", 0)
+
+            if total == 0:
+                return f"🔍 No hawker centres found with address containing '{address}'"
+
+            formatted_data = format_hawker_data(records)
+            return f"📍 Found {total} hawker centre(s) with address '{address}':\n\n{formatted_data}"
+
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error: {e.response.status_code}")
+        return f"❌ API Error: HTTP {e.response.status_code}"
+    except httpx.TimeoutException:
+        logger.error("Request timeout")
+        return "⏱️ Request timed out. Please try again."
+    except Exception as e:
+        logger.error(f"Error searching by address: {e}")
+        return f"❌ Error: {str(e)}"
+
+
+@mcp.tool()
+async def get_all_hawker_centres() -> str:
+    """Get all hawker centre records with their cleaning schedules and other works using pagination."""
+    logger.info("Getting all hawker centres with pagination")
+
+    try:
+        headers = {}
+        if API_KEY:
+            headers["x-api-key"] = API_KEY
+
+        params = {
+            "resource_id": RESOURCE_ID
+        }
+
+        # Fetch all records using pagination
+        all_records = await fetch_all_records(params, headers)
+        total = len(all_records)
+
+        if total == 0:
+            return "📋 No hawker centre records found"
+
+        formatted_data = format_hawker_data(all_records)
+        return f"📊 Found {total} hawker centres in Singapore:\n\n{formatted_data}"
+
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error: {e.response.status_code}")
+        return f"❌ API Error: HTTP {e.response.status_code}"
+    except httpx.TimeoutException:
+        logger.error("Request timeout")
+        return "⏱️ Request timed out. Please try again."
+    except Exception as e:
+        logger.error(f"Error getting all hawker centres: {e}")
         return f"❌ Error: {str(e)}"
 
 
