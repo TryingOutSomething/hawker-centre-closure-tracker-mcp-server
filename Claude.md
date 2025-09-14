@@ -1,5 +1,7 @@
 # Claude Integration Guide - Hawker Centre Closure Tracker
 
+> **Disclaimer**: This is an unofficial MCP server project that was entirely generated using Claude AI. While functional, please review and test thoroughly before production use.
+
 ## Overview
 
 This MCP server provides Claude with access to Singapore's official hawker centre closure data via data.gov.sg API. It enables real-time queries about hawker centre closures, reopening dates, and closure reasons.
@@ -12,20 +14,16 @@ This MCP server provides Claude with access to Singapore's official hawker centr
 - **Returns**: Formatted list of matching hawker centres with closure details
 - **Example**: `search_hawker_centres("Bedok")`
 
-### 2. get_all_closures(limit)
-- **Purpose**: Retrieve all current hawker centre closure records
-- **Parameters**: `limit` (string, default "50") - Maximum number of records to return
-- **Returns**: Formatted list of hawker centre closures
-- **Example**: `get_all_closures("20")`
-
 ## Data Structure
 
 Each hawker centre record includes:
 - **Name**: Official hawker centre name
-- **Address**: Full address of the hawker centre
-- **Closure Date**: When the hawker centre closed
-- **Reopening Date**: Expected or actual reopening date
-- **Reason**: Description of why the closure occurred
+- **Address**: Full address of the hawker centre (address_my_env)
+- **Q1 Cleaning**: Start date, end date, and remarks for Q1 cleaning period
+- **Q2 Cleaning**: Start date, end date, and remarks for Q2 cleaning period
+- **Q3 Cleaning**: Start date, end date, and remarks for Q3 cleaning period
+- **Q4 Cleaning**: Start date, end date, and remarks for Q4 cleaning period
+- **Other Works**: Start date, end date, and remarks for other maintenance works
 
 ## Usage Guidelines for Claude
 
