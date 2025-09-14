@@ -9,10 +9,22 @@ This MCP server provides Claude with access to Singapore's official hawker centr
 ## Available Tools
 
 ### 1. search_hawker_centres(keyword)
-- **Purpose**: Search for hawker centre closure information by keyword
+- **Purpose**: Search for hawker centre closure information by keyword (full text search)
 - **Parameters**: `keyword` (string) - Search term (hawker centre name, location, etc.)
 - **Returns**: Formatted list of matching hawker centres with closure details
 - **Example**: `search_hawker_centres("Bedok")`
+
+### 2. search_hawker_centres_by_address(address)
+- **Purpose**: Search for hawker centres by exact address matching
+- **Parameters**: `address` (string) - Full or partial address to search for
+- **Returns**: Formatted list of hawker centres with matching addresses
+- **Example**: `search_hawker_centres_by_address("Ang Mo Kio Avenue 10")`
+
+### 3. get_all_closures(limit)
+- **Purpose**: Retrieve all current hawker centre closure records
+- **Parameters**: `limit` (string, default "50") - Maximum number of records to return
+- **Returns**: Formatted list of hawker centre closures
+- **Example**: `get_all_closures("20")`
 
 ## Data Structure
 
